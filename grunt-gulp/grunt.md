@@ -59,7 +59,7 @@ Passos essenciais para qualquer projeto:
 ### Plugins Grunt
 - __[grunt-contrib-jshint](https://www.npmjs.com/package/grunt-contrib-jshint)__
 - __[grunt-contrib-concat](https://www.npmjs.com/package/grunt-contrib-concat)__
-- grunt-contrib-uglify
+- __[grunt-contrib-uglify](https://www.npmjs.com/package/grunt-contrib-uglify)__
 - grunt-contrib-cssmin
 - grunt-contrib-htmlmin
 - grunt-contrib-clean
@@ -159,18 +159,17 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
             grunt.loadNpmTasks('grunt-contrib-jshint');
             grunt.loadNpmTasks('grunt-contrib-concat');
 
-            grunt.registerTask('prod',['jshint']);
+            grunt.registerTask('prod',['jshint', 'concat']);
         };
     ```
 
-    Perceba que nesse trecho, existe uma origem (**src:**) e destino (**dest:**):
+    Perceba que: nesse trecho, existe uma **origem** (src) e **destino** (dest). Como também libs apontando para três arquivos (angular.min / angular-route.min / angular-messages.min).
     ``` js
     concat: {
         scripts: {
             src: [
                 'js/**/*.js'
                 'lib/**/*.js'
-
             ],
             dest: 'dist/js/scripts.js'
         },
@@ -190,3 +189,78 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
     ```
 
     Terminando assim a concatenação dos arquivos JS
+    
+8. É possível especificar qual tarefa será realizada adicionando **:arquivo** no final
+    ``` js
+    grunt.registerTask('prod',['jshint', 'concat:scripts']);
+    ```
+    Só será gerado **scripts**, configurando assim **separadamente**.
+    
+9. Agora, será inserido o plugin **uglify**. 
+
+    Plugin útil para realizar a minificação de arquivos, reduzindo assim o tamanho (bytes) e unindo a um só arquivo. Normalmente é utilizado em arquivos já concatenados (concat).
+
+    Instalação dos pacotes do plugin **uglify**.
+    ``` js
+    npm install grunt-contrib-uglify --save-dev
+    ```
+
+    Carregou o plugin
+    ``` js
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    ```
+
+10. Criou a **subtask** para o plugin **uglify**, seguindo o mesmo padrão de **origem** (src) e **destino** (dest).
+    ``` js
+    uglify: {
+        scripts: {
+            src: [
+                'js/**/*.js'
+                'lib/**/*.js'
+            ],
+        dest: 'dist/js/scripts.js'
+    },
+    ```
+
+11. O código ficou assim após a inserção do plugin **uglify**. Perceba que será gerado uma arquivo único, chamado de **scripts.js**.
+    ``` js
+    module.exports = function (grunt) {
+        grunt.initConfig({
+            jshint: {
+                dist:{
+                    src: ['js/**/*.js']
+                }
+            },
+            concat: {
+                scripts: {
+                    src: [
+                        'js/**/*.js'
+                        'lib/**/*.js'
+                    ],
+                    dest: 'dist/js/scripts.js'
+                },
+                libs: {
+                    src: [
+                        'bower_components/angular/angular.min.js',
+                        'bower_components/angular-route/angular-route.min.js',
+                        'bower_components/angular-messages/angular-messages.min.js',
+                    ],
+                }
+            },
+            uglify: {
+                scripts: {
+                    src: ['dist/js/scripts.js'],
+                    dest: 'dist/js/scripts.js'
+                }
+            }
+            
+        });
+
+        grunt.loadNpmTasks('grunt-contrib-jshint');
+        grunt.loadNpmTasks('grunt-contrib-concat');
+
+        grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify']);
+    };
+    ```
+    
+    A pasta de arquivos utilizada no **uglify** foi gerada pelo plugin **concat**.

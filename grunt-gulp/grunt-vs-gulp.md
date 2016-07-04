@@ -7,7 +7,7 @@ Ambos são extensíveis e funcionam por meio de plugins.
 
 ### Interesse
 
-| *Em 06/2016* | __[Grunt](content/grunt.md)__ | __[Gulp](content/gulp.md)__ | Vencedor |
+| *Em 06/2016* | __[Grunt](grunt-gulp/grunt.md)__ | __[Gulp](grunt-gulp/gulp.md)__ | Vencedor |
 | --------- | ------ | ------ | ------ |
 | **Downloads** | 1.632.998 | 2.149.907 | **Gulp**
 | **Plugins**   | 5.778 | 2.501 | **Grunt**
