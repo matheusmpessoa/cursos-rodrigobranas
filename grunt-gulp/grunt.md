@@ -66,46 +66,29 @@ Passos essenciais para qualquer projeto:
 - grunt-contrib-copy
 
 ### Utilização de plugins
-Para se utilizar qualquer plugin, sempre se deve seguir DOIS passos: Instalar o plugin (**1**) e chamar o plugin no arquivo grunt (**2**).
+Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instalar o plugin (**1**) e chamar o plugin no arquivo grunt (**2**).
 
 #### Passo a passo prático de como criar um **gruntfile.js**
 1. Digitar o comando **npm** para instalar o plugin.
-``` js
-npm install grunt-contrib-jshint --save-dev
-```
+    ``` js
+    npm install grunt-contrib-jshint --save-dev
+    ```
 
 2. Carregar o plugin no arquivo grunt.
-``` js
-module.exports = function (grunt) {
-    grunt.initConfig({
+    ``` js
+    module.exports = function (grunt) {
+        grunt.initConfig({
 
-    });
+        });
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
+        grunt.loadNpmTasks('grunt-contrib-jshint');
 
-    grunt.registerTask('default',[]);
-};
-```
+        grunt.registerTask('default',[]);
+    };
+    ```
 3. Declarar subtasks para realizar a ação do plugin **jshint**
-``` js
-module.exports = function (grunt) {
-    grunt.initConfig({
-        jshint: {
-            dist:{
-                src: ['js/**/*.js']
-            }
-        }
-    });
-
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-
-    grunt.registerTask('default',[]);
-};
-```
-
-4. Alterando o nome da workflow, de **default** para **prod**.
-``` js
-module.exports = function (grunt) {
+    ``` js
+    module.exports = function (grunt) {
         grunt.initConfig({
             jshint: {
                 dist:{
@@ -116,15 +99,32 @@ module.exports = function (grunt) {
 
         grunt.loadNpmTasks('grunt-contrib-jshint');
 
-        grunt.registerTask('prod',['jshint']);
+        grunt.registerTask('default',[]);
     };
-```
+    ```
+
+4. Alterando o nome da workflow, de **default** para **prod**.
+    ``` js
+    module.exports = function (grunt) {
+            grunt.initConfig({
+                jshint: {
+                    dist:{
+                        src: ['js/**/*.js']
+                    }
+                }
+            });
+
+            grunt.loadNpmTasks('grunt-contrib-jshint');
+
+            grunt.registerTask('prod',['jshint']);
+        };
+    ```
 
 5. Para executar o arquivo grunt criado, digita-se:
-``` js
-grunt prod
-```
-Executando assim o arquivo **prod**.
+    ``` js
+    grunt prod
+    ```
+    Executando assim o arquivo **prod**.
     
 6. Agora, será inserido o plugin **concat**
 
