@@ -8,7 +8,7 @@
 ### Processo de instalação
 Necessário ter o Node.js instalado.
 
-Para executar o comando de instalação do Grunt, digite no npm a instalação do **grunt-client-line** e **--save-dev** para adicionar dependências do desenvolvedor:
+Para executar o comando de instalação do Grunt, digite no npm a instalação do **grunt-client-line** e **--save-dev** para adicionar nas dependências do arquivo **package.json**:
 ``` js 
 npm install -g grunt-cli
 npm install grunt --save-dev
@@ -60,8 +60,8 @@ Passos essenciais para qualquer projeto:
 - __[grunt-contrib-jshint](https://www.npmjs.com/package/grunt-contrib-jshint)__
 - __[grunt-contrib-concat](https://www.npmjs.com/package/grunt-contrib-concat)__
 - __[grunt-contrib-uglify](https://www.npmjs.com/package/grunt-contrib-uglify)__
-- grunt-contrib-cssmin
-- grunt-contrib-htmlmin
+- __[grunt-contrib-cssmin](https://www.npmjs.com/package/grunt-contrib-cssmin)__
+- __[grunt-contrib-htmlmin](https://www.npmjs.com/package/grunt-contrib-htmlmin)__
 - grunt-contrib-clean
 - grunt-contrib-copy
 
@@ -120,7 +120,7 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
         };
     ```
 
-5. Para executar o arquivo grunt criado, digita-se:
+5. Para executar o workflow grunt criado, digita-se:
     ``` js
     grunt prod
     ```
@@ -258,9 +258,186 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
 
         grunt.loadNpmTasks('grunt-contrib-jshint');
         grunt.loadNpmTasks('grunt-contrib-concat');
+        grunt.loadNpmTasks('grunt-contrib-uglify');
 
         grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify']);
     };
     ```
     
     A pasta de arquivos utilizada no **uglify** foi gerada pelo plugin **concat**.
+    
+12. Para executar o workflow digite:
+    ``` js
+    grunt prod
+    ```
+
+13. A partir de agora, será inserido o plugin **cssmin** no workflow, digitando o seguinte comando:
+    ``` js
+    npm install grunt-contrib-cssmin --save-dev
+    ```
+
+    Lembre-se de sempre digitar **--save-dev** para adicionar nas dependências do **package.json**.
+
+14. Para carregar o plugin **cssmin** adicione a task:
+    ``` js
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    ```
+
+15. Agora, será adicionado o **cssmin** no **gruntfile.js**. A task é composta de uma **origem** e **destino** da CSS que será manipulada:
+    ``` js
+    cssmin: {
+        all: {
+            src: ['bower_components/bootstrap/dist/css/bootstrap.min.css', 'css/**/*.css'],
+            dest: 'dist/css/styles.min.css'
+        }
+    }
+    ```
+
+16. Agora, confira como ficou o arquivo **gruntfile.js** após a inserção do plugin **cssmin**.
+    ``` js
+    module.exports = function (grunt) {
+        grunt.initConfig({
+            jshint: {
+                dist:{
+                    src: ['js/**/*.js']
+                }
+            },
+            concat: {
+                scripts: {
+                    src: [
+                        'js/**/*.js'
+                        'lib/**/*.js'
+                    ],
+                    dest: 'dist/js/scripts.js'
+                },
+                libs: {
+                    src: [
+                        'bower_components/angular/angular.min.js',
+                        'bower_components/angular-route/angular-route.min.js',
+                        'bower_components/angular-messages/angular-messages.min.js',
+                    ],
+                }
+            },
+            uglify: {
+                scripts: {
+                    src: ['dist/js/scripts.js'],
+                    dest: 'dist/js/scripts.js'
+                }
+            }
+            cssmin: {
+                all: {
+                    src: ['bower_components/bootstrap/dist/css/bootstrap.min.css', 'css/**/*.css'],
+                    dest: 'dist/css/styles.min.css'
+                }
+            }
+        });
+
+        grunt.loadNpmTasks('grunt-contrib-jshint');
+        grunt.loadNpmTasks('grunt-contrib-concat');
+        grunt.loadNpmTasks('grunt-contrib-uglify');
+        grunt.loadNpmTasks('grunt-contrib-cssmin');
+
+        grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify', 'cssmin']);
+    };
+    ```
+    
+17. Seguindo os dois passos de sempre para habilitar o uso de algum plugin, digite o seguinte comando para instalar o **htmlmin** no workflow:
+    ``` js
+    npm install grunt-contrib-htmlmin --save-dev
+    ```
+
+18. Para carregar o plugin **htmlmin** adicione a task:
+    ``` js
+    grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    ```
+
+19. Em seguida, é configurada a task **htmlmin**.
+    ``` js
+    htmlmin: {
+        options: {
+            removeComments: true,
+            collapseWhitespace: true
+        },
+        views: {
+            expand: true,
+            cwd: 'view/',
+            src: ['*.html'],
+            dest: 'dist/view'
+        }
+    }
+    ```
+    - expand: habilita o uso de diretórios.
+    - cwd: Aponta o diretório que será manipulado.
+    - src: Aponta o arquivo que está na pasta indicada.
+    - dest: Destino da pasta
+
+20. Confira o arquivo **gruntfile.js** após a inserção do plugin **htmlmin**.
+    ``` js
+    module.exports = function (grunt) {
+        grunt.initConfig({
+            jshint: {
+                dist:{
+                    src: ['js/**/*.js']
+                }
+            },
+            concat: {
+                scripts: {
+                    src: [
+                        'js/**/*.js'
+                        'lib/**/*.js'
+                    ],
+                    dest: 'dist/js/scripts.js'
+                },
+                libs: {
+                    src: [
+                        'bower_components/angular/angular.min.js',
+                        'bower_components/angular-route/angular-route.min.js',
+                        'bower_components/angular-messages/angular-messages.min.js',
+                    ],
+                }
+            },
+            uglify: {
+                scripts: {
+                    src: ['dist/js/scripts.js'],
+                    dest: 'dist/js/scripts.js'
+                }
+            }
+            cssmin: {
+                all: {
+                    src: ['bower_components/bootstrap/dist/css/bootstrap.min.css', 'css/**/*.css'],
+                    dest: 'dist/css/styles.min.css'
+                }
+            }
+            htmlmin: {
+                options: {
+                    removeComments: true,
+                    collapseWhitespace: true
+                },
+                views: {
+                    expand: true,
+                    cwd: 'view/',
+                    src: ['*.html'],
+                    dest: 'dist/view'
+                }
+            }
+        });
+
+        grunt.loadNpmTasks('grunt-contrib-jshint');
+        grunt.loadNpmTasks('grunt-contrib-concat');
+        grunt.loadNpmTasks('grunt-contrib-uglify');
+        grunt.loadNpmTasks('grunt-contrib-cssmin');
+        grunt.loadNpmTasks('grunt-contrib-htmlmin');
+
+        grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify', 'cssmin', 'htmlmin']);
+    };
+    ```
+    
+21. Para executar apenas a task criada com o plugin **htmlmin** digite:
+    ``` js
+    grunt htmlmin
+    ```
+    
+    Para executar todo o **gruntfile.js** digite:
+    ``` js
+    grunt prod
+    ```
