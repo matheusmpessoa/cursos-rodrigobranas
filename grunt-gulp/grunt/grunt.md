@@ -62,8 +62,8 @@ Passos essenciais para qualquer projeto:
 - __[grunt-contrib-uglify](https://www.npmjs.com/package/grunt-contrib-uglify)__
 - __[grunt-contrib-cssmin](https://www.npmjs.com/package/grunt-contrib-cssmin)__
 - __[grunt-contrib-htmlmin](https://www.npmjs.com/package/grunt-contrib-htmlmin)__
-- grunt-contrib-clean
-- grunt-contrib-copy
+- __[grunt-contrib-clean](https://www.npmjs.com/package/grunt-contrib-clean)__
+- __[grunt-contrib-copy](https://www.npmjs.com/package/grunt-contrib-copy)__
 
 ### Utilização de plugins
 Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instalar o plugin (**1**) e chamar o plugin no arquivo grunt (**2**).
@@ -337,7 +337,7 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
         grunt.loadNpmTasks('grunt-contrib-uglify');
         grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-        grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify', 'cssmin']);
+        grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify', 'concat:libs', 'cssmin']);
     };
     ```
     
@@ -428,7 +428,7 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
         grunt.loadNpmTasks('grunt-contrib-cssmin');
         grunt.loadNpmTasks('grunt-contrib-htmlmin');
 
-        grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify', 'cssmin', 'htmlmin']);
+        grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify', 'concat:libs', 'cssmin', 'htmlmin']);
     };
     ```
     
@@ -441,3 +441,248 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
     ``` js
     grunt prod
     ```
+    
+22. Voltando ao plugin **concat**, será adicionado uma subtask para aproveitar os arquivos **.min** gerados, concatenando os arquivos minimos do projeto (libs) e os arquivos mínimos criados pelo usuário (scripts)
+    ```js
+    concat: {
+        scripts: {
+            src: [
+                'js/**/*.js'
+                'lib/**/*.js'
+            ],
+            dest: 'dist/js/scripts.js'
+        },
+        libs: {
+            src: [
+                'bower_components/angular/angular.min.js',
+                'bower_components/angular-route/angular-route.min.js',
+                'bower_components/angular-messages/angular-messages.min.js',
+            ],
+        }
+        all: {
+            src: ['dist/js/libs.min.js', 'dist/js/scripts.min.js'],
+            dest: 'dist/js/all.min.js'
+        }
+    },
+    ```
+    
+    Para registrar a subtask **all**, carregue-a no final do código.
+    ```js
+    grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify', 'concat:libs', 'concat:all' 'cssmin', 'htmlmin']);
+    ```
+    
+    Para testar, digite:
+    ```js
+    grunt prod
+    ```
+23. Confira como ficou o código após carregar novamente o plugin **htmlmin** e configurar a subtask **all**
+    ```js
+    module.exports = function (grunt) {
+        grunt.initConfig({
+            jshint: {
+                dist:{
+                    src: ['js/**/*.js']
+                }
+            },
+            concat: {
+                scripts: {
+                    src: [
+                        'js/**/*.js'
+                        'lib/**/*.js'
+                    ],
+                    dest: 'dist/js/scripts.js'
+                },
+                libs: {
+                    src: [
+                        'bower_components/angular/angular.min.js',
+                        'bower_components/angular-route/angular-route.min.js',
+                        'bower_components/angular-messages/angular-messages.min.js',
+                    ],
+                }
+                all: {
+                    src: ['dist/js/libs.min.js', 'dist/js/scripts.min.js'],
+                    dest: 'dist/js/all.min.js'
+                }
+            },
+            uglify: {
+                scripts: {
+                    src: ['dist/js/scripts.js'],
+                    dest: 'dist/js/scripts.js'
+                }
+            }
+            cssmin: {
+                all: {
+                    src: ['bower_components/bootstrap/dist/css/bootstrap.min.css', 'css/**/*.css'],
+                    dest: 'dist/css/styles.min.css'
+                }
+            }
+            htmlmin: {
+                options: {
+                    removeComments: true,
+                    collapseWhitespace: true
+                },
+                views: {
+                    expand: true,
+                    cwd: 'view/',
+                    src: ['*.html'],
+                    dest: 'dist/view'
+                }
+            }
+        });
+
+        grunt.loadNpmTasks('grunt-contrib-jshint');
+        grunt.loadNpmTasks('grunt-contrib-concat');
+        grunt.loadNpmTasks('grunt-contrib-uglify');
+        grunt.loadNpmTasks('grunt-contrib-cssmin');
+        grunt.loadNpmTasks('grunt-contrib-htmlmin');
+
+        grunt.registerTask('prod',['jshint', 'concat:scripts', 'uglify', 'concat:libs', 'concat:all' 'cssmin', 'htmlmin']);
+    };
+    ```
+
+24. Agora, será incluido o plugin **clean**. Plugin utilizado para limpeza de arquivos, muito utilizado para remover arquivos não utilizados no projeto após fazer a **concatenação** e **minificação**.
+    ``` js
+    npm install grunt-contrib-clean --save-dev
+    ```
+
+    Para carregar o plugin **clean** adicione a task:
+    ``` js
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    ```
+26. Para configurar o plugin **clean** adicione-o acima das tasks criadas previamente.
+    ``` js
+    clean: {
+        temp: ['dist/js/libs.js', 'dist/js/libs.min.js', 'dist/js/scripts.js', 'dist/js/scripts.min.js'],
+        all: ['dist/']
+    }
+    ```
+    SEMPRE prestar muita atenção na utilização desse plugin, pois ele **apaga** arquivos e diretórios.
+
+27. Para registrar a task criada pelo plugin **clean**. Adicione o mesmo no **começo**.
+    ```js
+    grunt.registerTask('prod',['clean:all','jshint', 'concat:scripts', 'uglify', 'concat:libs', 'concat:all' 'cssmin', 'htmlmin']);
+    ```
+    
+    Para testar, digite:
+    ```js
+    grunt prod
+    ```
+    
+    Arquivos serão apagados e gerados novamente após o teste. Terminando assim a configuração do plugin **clean**.
+
+28. Agora, será inserido um último plugin. O plugin **copy**
+
+    Para realizar a instalação digite:
+    ``` js
+    npm install grunt-contrib-copy --save-dev
+    ```
+
+    Para carregar o plugin **copy** adicione a task:
+    ``` js
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    ```
+
+29. A configuração do plugin **copy** se realiza com origem (src) e destino (dest). Esse plugin é utilizado para copiar arquivos.
+    ```js
+    copy: {
+        all: {
+            src: 'index-prod.html',
+            dest: 'dist/index.html'
+        }
+    }
+    ```
+    
+    Para testar o plugin, digite:
+    ```js
+    grunt copy
+    ```
+    
+    Para registrar a tarefa criada pelo plugin, digite:
+    ```js
+    grunt.registerTask('prod',['clean:all','jshint', 'concat:scripts', 'uglify', 'concat:libs', 'concat:all' 'cssmin', 'htmlmin', 'clean:temp']);
+    ```
+    
+30. Todo o código ficou assim:
+    ```js
+    module.exports = function (grunt) {
+        grunt.initConfig({
+            clean: {
+                temp: ['dist/js/libs.js', 'dist/js/libs.min.js', 'dist/js/scripts.js', 'dist/js/scripts.min.js'],
+                all: ['dist/']
+            },
+            jshint: {
+                dist:{
+                    src: ['js/**/*.js']
+                }
+            },
+            concat: {
+                scripts: {
+                    src: [
+                        'js/**/*.js'
+                        'lib/**/*.js'
+                    ],
+                    dest: 'dist/js/scripts.js'
+                },
+                libs: {
+                    src: [
+                        'bower_components/angular/angular.min.js',
+                        'bower_components/angular-route/angular-route.min.js',
+                        'bower_components/angular-messages/angular-messages.min.js',
+                    ],
+                }
+                all: {
+                    src: ['dist/js/libs.min.js', 'dist/js/scripts.min.js'],
+                    dest: 'dist/js/all.min.js'
+                }
+            },
+            uglify: {
+                scripts: {
+                    src: ['dist/js/scripts.js'],
+                    dest: 'dist/js/scripts.js'
+                }
+            }
+            cssmin: {
+                all: {
+                    src: ['bower_components/bootstrap/dist/css/bootstrap.min.css', 'css/**/*.css'],
+                    dest: 'dist/css/styles.min.css'
+                }
+            }
+            htmlmin: {
+                options: {
+                    removeComments: true,
+                    collapseWhitespace: true
+                },
+                views: {
+                    expand: true,
+                    cwd: 'view/',
+                    src: ['*.html'],
+                    dest: 'dist/view'
+                }
+            },
+            copy: {
+                all: {
+                    src: 'index-prod.html',
+                    dest: 'dist/index.html'
+                }
+            }
+        });
+
+        grunt.loadNpmTasks('grunt-contrib-jshint');
+        grunt.loadNpmTasks('grunt-contrib-concat');
+        grunt.loadNpmTasks('grunt-contrib-uglify');
+        grunt.loadNpmTasks('grunt-contrib-cssmin');
+        grunt.loadNpmTasks('grunt-contrib-htmlmin');
+        grunt.loadNpmTasks('grunt-contrib-copy');
+
+        grunt.registerTask('prod',['clean:all','jshint', 'concat:scripts', 'uglify', 'concat:libs', 'concat:all' 'cssmin', 'htmlmin', 'copy', 'clean:temp']);
+    };
+    ```
+    
+    Para executar TODO o projeto, digite:
+    ```js
+    grunt prod
+    ```
+    
+    Após inserir esse último plugin, o workflow básico está pronto. 
+    
+    CSS foi gerada, JavaScript concatenada e modificada, views também minificadas.

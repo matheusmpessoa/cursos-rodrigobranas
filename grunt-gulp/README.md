@@ -6,6 +6,9 @@ __[Grunt vs Gulp](https://www.youtube.com/playlist?list=PLQCmSnNFVYnTkUx1tVVPumo
 ### Conteúdo
 __[Grunt VS Gulp](grunt-vs-gulp.md)__
 
-__[Grunt](grunt.md)__
+__[Grunt](grunt/grunt.md)__
 
-__[Grunt](gulp.md)__
+__[Grunt](gulp/gulp.md)__
+
+### Códigos criados
+__[Github Rodrigo Branas](https://github.com/rodrigobranas/youtube/tree/master/Grunt_vs_Gulp)__
