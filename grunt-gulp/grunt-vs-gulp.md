@@ -1,3 +1,6 @@
+## Grunt vs Gulp
+![Grunt vs Gulp](http://fiticu.fr/wp-content/uploads/2016/04/grunt-vs-gulp.jpg "Grunt vs Gulp")
+
 ## Características
 
 ### O que são?

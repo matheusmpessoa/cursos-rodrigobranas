@@ -1,4 +1,5 @@
 ## Grunt
+![Grunt](http://helabs.com/blog/images/posts/2014-10-17/grunt_work.jpg "Grunt")
 
 ### Sites
 - __[Grunt](http://gruntjs.com/)__
@@ -26,7 +27,7 @@ O **init config**, aonde se encontra a configuração de cada plugin.
 
 ### Arquivo mínimo grunt
 
-Arquivo mínimo de configuração - visualizando o arquivo **gruntifile.js**:
+Arquivo mínimo de configuração - visualizando o arquivo **gruntfile.js**:
 ``` js
 module.exports = function (grunt) {
     grunt.initConfig({
