@@ -687,3 +687,5 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
     Após inserir esse último plugin, o workflow básico está pronto. 
     
     CSS foi gerada, JavaScript concatenada e modificada, views também minificadas.
+    
+    Confira o __[gruntfile.js](grunt/gruntfile.js)__ criado.

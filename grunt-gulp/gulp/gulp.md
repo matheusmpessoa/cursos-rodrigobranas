@@ -57,6 +57,8 @@ Passos essenciais para qualquer projeto:
 
 ### Plugins Gulp
 - __[gulp-jshint](https://www.npmjs.com/package/gulp-jshint/)__
+- __[gulp-uglify](https://www.npmjs.com/package/gulp-uglify)__
+- __[gulp-clean](https://www.npmjs.com/package/gulp-clean)__
 
 ### Utilização de plugins
 Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instalar o plugin (**1**) e chamar a variável para declarar o plugin (**2**).
@@ -65,4 +67,160 @@ Para se utilizar qualquer plugin, sempre se deve seguir **DOIS** passos: Instala
 1. Digite o comando **npm** para instalar o plugin.
     ``` js
     npm install jshint gulp-jshint --save-dev
+    ```
+
+2. Adicione a importação do plugin **jshint** no **gulpfile.js**. A importação é feita declarando uma variável com o nome do plugin e chamando-o em seguida.
+    ``` js
+    var jshint = require('gulp-jshint');
+    ```
+    
+    A task é criada chamando uma **função**. Com o **gulp.src** é possível especificar aonde se encontra os arquivos que serão lidos. O **gulp.src** é um readable string.
+    ``` js
+    gulp.task('jshint', function () {
+        return gulp.src('js/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+    });
+    ```
+    Ao adicionar **return** na task a mesma se torna assíncrona. Se não for retornar nada ela é sincrona. Pode se retornar uma string, promise callback.
+    
+    É possível adicionar dependências a cada task. Nesse caso a task default seria executada antes do jshint.
+    ``` js
+    gulp.task('jshint', ['default'], function () {
+    
+    });
+    ```
+    
+    O código está assim até o momento:
+    ``` js
+    var gulp = require('gulp');
+    var jshint = require('gulp-jshint');
+    
+    gulp.task('jshint', function () {
+        return gulp.src('js/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+    });
+    
+    gulp.task('default', ['jshint']);
+    ```
+
+3. Para executar **gulpfile.js** pode se digitar:
+    ```js
+    gulp
+    ```
+    Ou
+    ```js
+    gulp default
+    ```
+    
+    Para executar apenas a task **jshint**, digita-se:
+    ```js
+    gulp jshint
+    ```
+
+4.  Agora, será inserido o plugin **uglify**, que para ser instalado digita-se:
+    ``` js
+    npm install --save-dev gulp-uglify
+    ```
+    O plugin **uglify** é utilizado para  minificação de arquivos
+
+5. Para dar inicio no código do plugin, chame o plugin com uma variavel.
+    ``` js
+    var uglify = require('gulp-uglify');
+    ```
+
+6. A task do plugin **uglify** será criada agora:
+    ```js
+    gulp.task('uglify', function () {
+        return gulp.src('js/**/*.js')
+        .pipe(gulp.dest('dist/js'));
+    });
+    ```
+    Perceba que o **gulp.src** define a origem do código a ser manipulado. O **gulp.dest** define o destino.
+    
+    Adicione o registro do plugin **uglify** na task.
+    ```js
+    gulp.task('default', ['jshint', 'uglify']);
+    ```
+    
+    O código está assim até o momento:
+    ```js
+    var gulp = require('gulp');
+    var jshint = require('gulp-jshint');
+    var uglify = require('gulp-uglify');
+    
+    gulp.task('jshint', function () {
+        return gulp.src('js/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+    });
+    
+    gulp.task('uglify', function () {
+        return gulp.src('js/**/*.js')
+        .pipe(gulp.dest('dist/js'));
+    });
+    
+    gulp.task('default', ['jshint', 'uglify']);
+    ```
+
+    Para executar o **gulpfile.js** digite:
+    ```js
+    gulp
+    ```
+
+7. Neste momento será inserido o plugin **clean**. Utilizado para limpeza de arquivos. Utilize sempre esse plugin com **ATENÇÃO** pois o mesmo deleta arquivos.
+
+    Para realizar a instalação deste plugin, digite:
+    ```js
+    npm install --save-dev gulp-clean
+    ```
+    
+    Chame a variável:
+    ```js
+    var clean = require('gulp-clean');
+    ```
+    
+    Crie a task do plugin **clean**.
+    ```js
+    gulp.task('clean', function () {
+        return gulp.src('dist/')
+        .pipe(gulp.dest(clean());
+    });
+    ```
+
+8. Adicione uma dependência na task **uglify**, para que execute a task **clean** antes da task **uglify**.
+    ```js
+    gulp.task('uglify', ['clean'],function () {
+        return gulp.src('js/**/*.js')
+        .pipe(gulp.dest('dist/js'));
+    });
+    ```
+    
+    Ao adicionar essa dependência a necessidade de chamar a task do plugin **uglify** se torna desnecessária.
+    
+    O código completo está assim no momento:
+    ```js
+    var gulp = require('gulp');
+    var jshint = require('gulp-jshint');
+    var uglify = require('gulp-uglify');
+    var clean = require('gulp-clean');
+    
+    gulp.task('clean', function () {
+        return gulp.src('dist/')
+        .pipe(gulp.dest(clean());
+    });
+    
+    gulp.task('jshint', function () {
+        return gulp.src('js/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+    });
+    
+    gulp.task('uglify', ['clean'],function () {
+        return gulp.src('js/**/*.js')
+        .pipe(gulp.dest('dist/js'));
+    });
+    
+    gulp.task('default', ['jshint', 'uglify']);
     ```
